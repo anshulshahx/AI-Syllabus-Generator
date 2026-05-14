@@ -1,0 +1,91 @@
+import requests
+import json
+import os
+from datetime import datetime
+from app.config import OLLAMA_BASE_URL, OLLAMA_MODEL
+from app.prompts.outcome_prompt import build_outcome_prompt
+from app.schemas.models import OutcomeRequest, OutcomeObject
+from app.rules.engine import run_rules_engine
+
+OUTPUTS_DIR = "outputs"
+
+def save_to_file(data: dict, prefix: str):
+    os.makedirs(OUTPUTS_DIR, exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"{OUTPUTS_DIR}/{prefix}_{timestamp}.json"
+    with open(filename, "w") as f:
+        json.dump(data, f, indent=2)
+    print(f"Saved output to {filename}")
+
+def generate_outcomes(request: OutcomeRequest) -> list[OutcomeObject]:
+    prompt = build_outcome_prompt(
+        course_name=request.course_name,
+        course_description=request.course_description,
+        target_bloom_levels=request.target_bloom_levels,
+        n_candidates=request.n_candidates
+    )
+
+    try:
+        response = requests.post(
+            f"{OLLAMA_BASE_URL}/api/generate",
+            json={
+                "model": OLLAMA_MODEL,
+                "prompt": prompt,
+                "stream": False,
+                "format": "json"
+            },
+            timeout=180
+        )
+
+        print(f"Ollama status code: {response.status_code}")
+
+        if response.status_code != 200:
+            print(f"Ollama error: {response.text}")
+            return []
+
+        raw = response.json()
+        text = raw.get("response", "").strip()
+
+        if not text:
+            print("Empty response from Ollama")
+            return []
+
+        if "```" in text:
+            parts = text.split("```")
+            for part in parts:
+                if "{" in part:
+                    text = part
+                    if text.startswith("json"):
+                        text = text[4:]
+                    break
+
+        text = text.strip()
+        parsed = json.loads(text)
+        outcomes = []
+
+        for item in parsed.get("outcomes", []):
+            outcomes.append(OutcomeObject(
+                text=item.get("text", ""),
+                bloom_level=item.get("bloom_level", ""),
+                assessment_suggestion=item.get("assessment_suggestion", ""),
+                confidence_est=float(item.get("confidence_est", 0.8))
+            ))
+
+        # Pass through rules engine
+        outcomes = run_rules_engine(outcomes)
+
+        # Save to file
+        save_to_file({
+            "course_name": request.course_name,
+            "generated_at": datetime.now().isoformat(),
+            "outcomes": [o.dict() for o in outcomes]
+        }, f"outcomes_{request.course_name.replace(' ', '_')}")
+
+        return outcomes
+
+    except json.JSONDecodeError as e:
+        print(f"JSON parse error: {e}")
+        return []
+    except Exception as e:
+        print(f"Error: {e}")
+        return []
