@@ -1,5 +1,8 @@
 import requests
 import os
+from app.utils.helpers import get_system_stats, log_request, log_response, log_error
+from app.schemas.contracts import ALL_CONTRACTS
+from app.schemas.validator import run_full_validation
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from app.schemas.models import (
@@ -119,3 +122,17 @@ def psos(request: PSORequest):
 @app.post("/programme/generate-all", response_model=ProgrammeResponse)
 def programme_all(request: ProgrammeRequest):
     return generate_programme(request)
+
+# ── Contract endpoints ───────────────────────────────────────────
+@app.get("/contracts")
+def get_contracts():
+    return ALL_CONTRACTS
+
+@app.post("/contracts/validate/{data_type}")
+def validate_data(data_type: str, data: dict):
+    return run_full_validation(data, data_type)
+
+# ── Stats endpoint ───────────────────────────────────────────────
+@app.get("/stats")
+def stats():
+    return get_system_stats()
