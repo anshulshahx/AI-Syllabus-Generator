@@ -457,5 +457,107 @@
       "approved_text": "Understand stuff about networks",
       "bloom_level": "understand"
     }
+  },
+  {
+    "outcome_id": "TEST001",
+    "course_name": "Pipeline Test",
+    "original_text": "Apply pipeline testing to validate API endpoints",
+    "final_text": "Apply pipeline testing to validate API endpoints",
+    "bloom_level": "apply",
+    "action": "accept",
+    "reviewer_comment": "Pipeline test review",
+    "reviewed_at": "2026-05-18T04:11:11.417474",
+    "training_label": {
+      "is_valid": true,
+      "was_edited": false,
+      "original_text": "Apply pipeline testing to validate API endpoints",
+      "approved_text": "Apply pipeline testing to validate API endpoints",
+      "bloom_level": "apply"
+    }
+  },
+  {
+    "outcome_id": "TEST002",
+    "course_name": "Pipeline Test",
+    "original_text": "Know the basics of testing",
+    "final_text": "Identify and apply basic software testing methodologies",
+    "bloom_level": "apply",
+    "action": "edit",
+    "reviewer_comment": "Fixed invalid verb",
+    "reviewed_at": "2026-05-18T04:11:11.418732",
+    "training_label": {
+      "is_valid": true,
+      "was_edited": true,
+      "original_text": "Know the basics of testing",
+      "approved_text": "Identify and apply basic software testing methodologies",
+      "bloom_level": "apply"
+    }
+  },
+  {
+    "outcome_id": "TEST003",
+    "course_name": "Pipeline Test",
+    "original_text": "Understand stuff about networks",
+    "final_text": "Understand stuff about networks",
+    "bloom_level": "understand",
+    "action": "reject",
+    "reviewer_comment": "Too vague and informal",
+    "reviewed_at": "2026-05-18T04:11:11.418913",
+    "training_label": {
+      "is_valid": false,
+      "was_edited": false,
+      "original_text": "Understand stuff about networks",
+      "approved_text": "Understand stuff about networks",
+      "bloom_level": "understand"
+    }
+  },
+  {
+    "outcome_id": "TEST001",
+    "course_name": "Pipeline Test",
+    "original_text": "Apply pipeline testing to validate API endpoints",
+    "final_text": "Apply pipeline testing to validate API endpoints",
+    "bloom_level": "apply",
+    "action": "accept",
+    "reviewer_comment": "Pipeline test review",
+    "reviewed_at": "2026-05-18T04:26:29.013748",
+    "training_label": {
+      "is_valid": true,
+      "was_edited": false,
+      "original_text": "Apply pipeline testing to validate API endpoints",
+      "approved_text": "Apply pipeline testing to validate API endpoints",
+      "bloom_level": "apply"
+    }
+  },
+  {
+    "outcome_id": "TEST002",
+    "course_name": "Pipeline Test",
+    "original_text": "Know the basics of testing",
+    "final_text": "Identify and apply basic software testing methodologies",
+    "bloom_level": "apply",
+    "action": "edit",
+    "reviewer_comment": "Fixed invalid verb",
+    "reviewed_at": "2026-05-18T04:26:29.013863",
+    "training_label": {
+      "is_valid": true,
+      "was_edited": true,
+      "original_text": "Know the basics of testing",
+      "approved_text": "Identify and apply basic software testing methodologies",
+      "bloom_level": "apply"
+    }
+  },
+  {
+    "outcome_id": "TEST003",
+    "course_name": "Pipeline Test",
+    "original_text": "Understand stuff about networks",
+    "final_text": "Understand stuff about networks",
+    "bloom_level": "understand",
+    "action": "reject",
+    "reviewer_comment": "Too vague and informal",
+    "reviewed_at": "2026-05-18T04:26:29.013964",
+    "training_label": {
+      "is_valid": false,
+      "was_edited": false,
+      "original_text": "Understand stuff about networks",
+      "approved_text": "Understand stuff about networks",
+      "bloom_level": "understand"
+    }
   }
 ]

@@ -1,8 +1,5 @@
 import requests
 import os
-from app.utils.helpers import get_system_stats, log_request, log_response, log_error
-from app.schemas.contracts import ALL_CONTRACTS
-from app.schemas.validator import run_full_validation
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from app.schemas.models import (
@@ -26,17 +23,20 @@ from app.generator.programme_generator import (
     generate_psos, generate_programme
 )
 from app.exporter.docx_exporter import export_syllabus_to_docx
+from app.schemas.contracts import ALL_CONTRACTS
+from app.schemas.validator import run_full_validation
+from app.utils.helpers import get_system_stats
 from app.config import OLLAMA_BASE_URL, OLLAMA_MODEL
 
 app = FastAPI(
     title="Group 1 - Curriculum AI",
     description="Automated generation of Course Objectives and Learning Outcomes",
-    version="1.0.0"
+    version="2.0.0"
 )
 
 @app.get("/")
 def root():
-    return {"status": "Group 1 API is running"}
+    return {"status": "Group 1 API is running", "version": "2.0.0"}
 
 @app.get("/health")
 def health():
@@ -49,19 +49,17 @@ def health():
         "api":    "running",
         "ollama": ollama_status,
         "model":  OLLAMA_MODEL,
-        "endpoints": [
-            "GET  /",
-            "GET  /health",
-            "POST /generate/outcomes",
-            "POST /generate/syllabus",
-            "POST /export/docx",
-            "POST /review/submit",
-            "GET  /review/all",
-            "GET  /review/training-labels",
-            "POST /programme/peos",
-            "POST /programme/pos",
-            "POST /programme/psos",
-            "POST /programme/generate-all"
+        "version": "2.0.0",
+        "new_features": [
+            "education_level field (undergraduate/postgraduate/diploma/phd)",
+            "programme field (btech/bsc/bcom/ba/mtech/msc/mca/bca/phd/diploma)",
+            "year_of_study field (1-6)",
+            "custom_prompt field — user custom instructions",
+            "regenerate field — force new generation on rejection",
+            "topics per unit (SK Verma Sir)",
+            "course_outcomes (COs) in syllabus",
+            "open_source_resources in syllabus",
+            "improved DOCX with COs and topics"
         ]
     }
 
@@ -70,8 +68,11 @@ def health():
 def generate(request: OutcomeRequest):
     outcomes = generate_outcomes(request)
     return OutcomeResponse(
-        course_name=request.course_name,
-        outcomes=outcomes
+        course_name    = request.course_name,
+        education_level= request.education_level or "undergraduate",
+        programme      = request.programme or "btech",
+        year_of_study  = request.year_of_study,
+        outcomes       = outcomes
     )
 
 @app.post("/generate/syllabus", response_model=SyllabusResponse)
@@ -87,10 +88,15 @@ def export_docx(request: SyllabusRequest):
     file_path = export_syllabus_to_docx(syllabus_data)
     if not os.path.exists(file_path):
         raise HTTPException(status_code=500, detail="DOCX file could not be created")
+
+    prog  = request.programme or "general"
+    year  = f"_Year{request.year_of_study}" if request.year_of_study else ""
+    fname = f"{request.course_name.replace(' ', '_')}_{prog.upper()}{year}_syllabus.docx"
+
     return FileResponse(
-        path=file_path,
-        filename=f"{request.course_name.replace(' ', '_')}_syllabus.docx",
-        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        path      = file_path,
+        filename  = fname,
+        media_type= "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     )
 
 # ── Review endpoints ─────────────────────────────────────────────

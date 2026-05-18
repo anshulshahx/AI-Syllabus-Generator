@@ -102,10 +102,9 @@ def check_profanity(text: str) -> tuple:
 BIASED_TERMS = [
     "he", "she", "his", "her", "him", "himself", "herself",
     "mankind", "manpower", "manmade", "chairman", "policeman",
-    "simple", "easy", "obvious", "obviously", "just", "merely",
+    "obviously", "just", "merely",
     "trivial", "anyone can", "everybody knows"
 ]
-
 def check_bias(text: str) -> tuple:
     text_lower = text.lower()
     found = []

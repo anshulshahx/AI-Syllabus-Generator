@@ -480,5 +480,4 @@ if __name__ == "__main__":
     if failed == 0:
         print("  🎉 ALL PIPELINE TESTS PASSED!")
     else:
-        print(f"  ⚠  {failed} test(s) failed — check output above")
-    print("═"*60)
+        print(f"  ⚠  {failed} test(s) failed — check output above")uuu
