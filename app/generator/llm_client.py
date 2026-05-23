@@ -28,45 +28,26 @@ def generate_outcomes(request: OutcomeRequest) -> list[OutcomeObject]:
         year_of_study       = request.year_of_study,
         custom_prompt       = request.custom_prompt
     )
-
     try:
         response = requests.post(
             f"{OLLAMA_BASE_URL}/api/generate",
-            json={
-                "model":  OLLAMA_MODEL,
-                "prompt": prompt,
-                "stream": False,
-                "format": "json"
-            },
-            timeout=180
+            json={"model": OLLAMA_MODEL, "prompt": prompt, "stream": False, "format": "json"},
+            timeout=300
         )
-
         print(f"Ollama status: {response.status_code}")
-
         if response.status_code != 200:
-            print(f"Ollama error: {response.text}")
             return []
-
         raw  = response.json()
         text = raw.get("response", "").strip()
-
         if not text:
-            print("Empty response from Ollama")
             return []
-
         if "```" in text:
-            parts = text.split("```")
-            for part in parts:
+            for part in text.split("```"):
                 if "{" in part:
-                    text = part
-                    if text.startswith("json"):
-                        text = text[4:]
+                    text = part.lstrip("json").strip()
                     break
-
-        text   = text.strip()
-        parsed = json.loads(text)
+        parsed   = json.loads(text.strip())
         outcomes = []
-
         for item in parsed.get("outcomes", []):
             outcomes.append(OutcomeObject(
                 text                  = item.get("text", ""),
@@ -74,9 +55,7 @@ def generate_outcomes(request: OutcomeRequest) -> list[OutcomeObject]:
                 assessment_suggestion = item.get("assessment_suggestion", ""),
                 confidence_est        = float(item.get("confidence_est", 0.8))
             ))
-
         outcomes = run_rules_engine(outcomes)
-
         save_to_file({
             "course_name":    request.course_name,
             "education_level":request.education_level,
@@ -85,9 +64,7 @@ def generate_outcomes(request: OutcomeRequest) -> list[OutcomeObject]:
             "generated_at":   datetime.now().isoformat(),
             "outcomes":       [o.dict() for o in outcomes]
         }, f"outcomes_{request.course_name.replace(' ', '_')}")
-
         return outcomes
-
     except json.JSONDecodeError as e:
         print(f"JSON parse error: {e}")
         return []

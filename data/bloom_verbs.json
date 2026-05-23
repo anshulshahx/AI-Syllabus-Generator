@@ -11,8 +11,8 @@
   "apply": [
     "apply","solve","demonstrate","use","compute","execute","implement",
     "calculate","show","sketch","optimize","utilize","operate","simulate",
-    "derive","debug","trace","configure","modify","prepare","produce",
-    "construct","complete","examine","change"
+    "derive","debug","trace","configure","modify","prepare","complete",
+    "examine","change"
   ],
   "analyze": [
     "analyze","differentiate","examine","breakdown","compare","contrast",
@@ -25,8 +25,9 @@
     "measure","monitor","verify","select","conclude","determine"
   ],
   "create": [
-    "design","develop","construct","formulate","plan","produce","generate",
-    "compose","build","synthesize","propose","devise","invent","assemble",
-    "compile","model","integrate","organize","revise","write"
+    "create","design","develop","construct","formulate","plan","produce",
+    "generate","compose","build","synthesize","propose","devise","invent",
+    "assemble","compile","model","integrate","organize","revise","write",
+    "draft","engineer","establish","initiate"
   ]
 }

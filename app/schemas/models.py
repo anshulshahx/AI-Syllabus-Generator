@@ -3,12 +3,6 @@ from typing import List, Optional
 
 VALID_BLOOM_LEVELS = ["remember", "understand", "apply", "analyze", "evaluate", "create"]
 
-VALID_PROGRAMMES = [
-    "btech", "bsc", "bcom", "ba", "mtech", "msc", "mcom", "ma",
-    "bca", "mca", "mbbs", "bpharm", "mpharm", "diploma", "phd",
-    "barch", "mba", "llb", "bed"
-]
-
 class OutcomeRequest(BaseModel):
     course_name: str = Field(..., min_length=3, max_length=100)
     course_description: str = Field(..., min_length=10, max_length=1000)
@@ -30,7 +24,7 @@ class OutcomeRequest(BaseModel):
         if v:
             for level in v:
                 if level.lower() not in VALID_BLOOM_LEVELS:
-                    raise ValueError(f"Invalid bloom level: '{level}'. Must be one of {VALID_BLOOM_LEVELS}")
+                    raise ValueError(f"Invalid bloom level: '{level}'")
         return v
 
     @validator("course_description")

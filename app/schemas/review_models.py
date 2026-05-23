@@ -8,7 +8,7 @@ class ReviewAction(str, Enum):
     edit   = "edit"
 
 class OutcomeReview(BaseModel):
-    outcome_id: str = Field(..., description="Unique ID for the outcome being reviewed")
+    outcome_id: str
     course_name: str
     original_text: str
     edited_text: Optional[str] = None

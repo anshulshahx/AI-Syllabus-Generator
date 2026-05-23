@@ -10,7 +10,6 @@ from app.rules.engine import load_bloom_verbs
 bloom_verbs = load_bloom_verbs()
 OUTPUTS_DIR = "outputs"
 
-
 def save_syllabus_to_file(data: dict, course_name: str):
     os.makedirs(OUTPUTS_DIR, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -20,7 +19,6 @@ def save_syllabus_to_file(data: dict, course_name: str):
         json.dump(data, f, indent=2)
     print(f"Saved: {filename}")
     return filename
-
 
 def validate_bloom_start(text: str) -> str:
     if not text or not text.strip():
@@ -32,36 +30,25 @@ def validate_bloom_start(text: str) -> str:
         return f"[VERB_WARNING] {text}"
     return text
 
-
 def call_ollama(prompt: str, timeout: int = 600) -> str:
     print(f"Calling Ollama (timeout={timeout}s)...")
     response = requests.post(
         f"{OLLAMA_BASE_URL}/api/generate",
-        json={
-            "model":  OLLAMA_MODEL,
-            "prompt": prompt,
-            "stream": False,
-            "format": "json"
-        },
+        json={"model": OLLAMA_MODEL, "prompt": prompt, "stream": False, "format": "json"},
         timeout=timeout
     )
     if response.status_code != 200:
         raise Exception(f"Ollama HTTP {response.status_code}: {response.text[:200]}")
-
     raw  = response.json()
     text = raw.get("response", "").strip()
-
     if not text:
         raise Exception("Ollama returned empty response")
-
     if "```" in text:
         for part in text.split("```"):
             if "{" in part:
                 text = part.lstrip("json").strip()
                 break
-
     return text.strip()
-
 
 def parse_syllabus(parsed: dict, request: SyllabusRequest) -> SyllabusResponse:
     units = []
@@ -79,7 +66,6 @@ def parse_syllabus(parsed: dict, request: SyllabusRequest) -> SyllabusResponse:
             assessments      = unit.get("assessments",      []),
             readings         = unit.get("readings",         [])
         ))
-
     return SyllabusResponse(
         course_name           = request.course_name,
         course_code           = parsed.get("course_code") or request.course_code,
@@ -99,7 +85,6 @@ def parse_syllabus(parsed: dict, request: SyllabusRequest) -> SyllabusResponse:
         open_source_resources = parsed.get("open_source_resources",[])
     )
 
-
 def generate_syllabus(request: SyllabusRequest) -> SyllabusResponse:
     print(f"\n{'='*55}")
     print(f"Course:    {request.course_name}")
@@ -107,53 +92,35 @@ def generate_syllabus(request: SyllabusRequest) -> SyllabusResponse:
     print(f"Year: {request.year_of_study} | Sem: {request.semester} | Units: {request.num_units}")
     print(f"Regenerate: {request.regenerate}")
     print(f"{'='*55}")
-
     try:
         if request.regenerate:
             prompt = build_regenerate_prompt(
-                course_name       = request.course_name,
-                course_description= request.course_description,
-                num_units         = request.num_units,
-                education_level   = request.education_level   or "undergraduate",
-                programme         = request.programme         or "btech",
-                year_of_study     = request.year_of_study,
-                semester          = request.semester,
-                branch            = request.branch,
-                credits           = request.credits           or 4,
-                ltp               = request.ltp               or "3:1:0",
-                rejection_reason  = request.rejection_reason,
-                custom_prompt     = request.custom_prompt
+                request.course_name, request.course_description,
+                request.num_units,
+                request.education_level   or "undergraduate",
+                request.programme         or "btech",
+                request.year_of_study, request.semester, request.branch,
+                request.credits or 4, request.ltp or "3:1:0",
+                request.rejection_reason, request.custom_prompt
             )
         else:
             prompt = build_syllabus_prompt(
-                course_name       = request.course_name,
-                course_description= request.course_description,
-                num_units         = request.num_units,
-                education_level   = request.education_level   or "undergraduate",
-                programme         = request.programme         or "btech",
-                year_of_study     = request.year_of_study,
-                semester          = request.semester,
-                branch            = request.branch,
-                credits           = request.credits           or 4,
-                ltp               = request.ltp               or "3:1:0",
-                custom_prompt     = request.custom_prompt
+                request.course_name, request.course_description,
+                request.num_units,
+                request.education_level   or "undergraduate",
+                request.programme         or "btech",
+                request.year_of_study, request.semester, request.branch,
+                request.credits or 4, request.ltp or "3:1:0",
+                request.custom_prompt
             )
-
-        # Dynamic timeout based on number of units
         timeout = 300 + (request.num_units * 120)
         print(f"Timeout: {timeout}s for {request.num_units} units")
-
         text   = call_ollama(prompt, timeout=timeout)
         parsed = json.loads(text)
         result = parse_syllabus(parsed, request)
-
-        print(f"Units:      {len(result.units)}")
-        print(f"COs:        {len(result.course_outcomes)}")
-        print(f"Textbooks:  {len(result.textbooks)}")
-
+        print(f"Units: {len(result.units)} | COs: {len(result.course_outcomes)}")
         if len(result.units) == 0:
-            raise Exception("No units parsed from LLM response")
-
+            raise Exception("No units parsed")
         save_syllabus_to_file({
             "course_name":          request.course_name,
             "course_code":          result.course_code,
@@ -173,16 +140,14 @@ def generate_syllabus(request: SyllabusRequest) -> SyllabusResponse:
             "youtube_resources":    result.youtube_resources,
             "open_source_resources":result.open_source_resources,
         }, request.course_name)
-
         return result
-
     except Exception as e:
-        print(f"ERROR generating syllabus: {e}")
+        print(f"ERROR: {e}")
         import traceback
         traceback.print_exc()
         return SyllabusResponse(
-            course_name     = request.course_name,
-            education_level = request.education_level or "undergraduate",
-            programme       = request.programme       or "btech",
+            course_name=request.course_name,
+            education_level=request.education_level or "undergraduate",
+            programme=request.programme or "btech",
             units=[], course_objectives=[], course_outcomes=[]
         )

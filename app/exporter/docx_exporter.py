@@ -91,8 +91,8 @@ def export_syllabus_to_docx(syllabus: SyllabusResponse) -> str:
     ltp_tbl.columns[0].width = Inches(3.0)
     ltp_tbl.columns[1].width = Inches(3.5)
     remove_borders(ltp_tbl)
-    ll = ltp_tbl.cell(0,0).paragraphs[0]
-    lr = ltp_tbl.cell(0,1).paragraphs[0]
+    ll  = ltp_tbl.cell(0,0).paragraphs[0]
+    lr  = ltp_tbl.cell(0,1).paragraphs[0]
     lr.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     llr = ll.add_run(f"L:T:P:: {syllabus.ltp or '3:1:0'}")
     lrr = lr.add_run(f"Credits-{syllabus.credits or 4}")
@@ -134,7 +134,6 @@ def export_syllabus_to_docx(syllabus: SyllabusResponse) -> str:
     for unit in syllabus.units:
         hours = unit.hours or 8
 
-        # Unit title + hours
         up = doc.add_paragraph()
         up.paragraph_format.space_before = Pt(10)
         up.paragraph_format.space_after  = Pt(4)
@@ -142,7 +141,6 @@ def export_syllabus_to_docx(syllabus: SyllabusResponse) -> str:
         up.add_run("\t\t\t\t")
         sf(up.add_run(f"({hours} hours)"), size=11, bold=True)
 
-        # Topics flowing paragraph
         if unit.topics_paragraph:
             tp = doc.add_paragraph()
             sf(tp.add_run(unit.topics_paragraph), size=11)
@@ -154,7 +152,6 @@ def export_syllabus_to_docx(syllabus: SyllabusResponse) -> str:
             tp.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
             tp.paragraph_format.space_after = Pt(6)
 
-        # Topics as bullets
         if unit.topics:
             p = doc.add_paragraph()
             sf(p.add_run("Topics Covered:"), size=11, bold=True)
@@ -166,7 +163,6 @@ def export_syllabus_to_docx(syllabus: SyllabusResponse) -> str:
                 bp.paragraph_format.space_before = Pt(1)
                 bp.paragraph_format.space_after  = Pt(1)
 
-        # CSOs
         if unit.unit_objectives:
             p = doc.add_paragraph()
             sf(p.add_run("Course Specific Objectives (CSOs):"), size=11, bold=True)
@@ -179,7 +175,6 @@ def export_syllabus_to_docx(syllabus: SyllabusResponse) -> str:
                 bp.paragraph_format.space_before = Pt(1)
                 bp.paragraph_format.space_after  = Pt(1)
 
-        # Unit Outcomes
         if unit.unit_outcomes:
             p = doc.add_paragraph()
             sf(p.add_run("Course Specific Outcomes:"), size=11, bold=True)
@@ -192,7 +187,6 @@ def export_syllabus_to_docx(syllabus: SyllabusResponse) -> str:
                 bp.paragraph_format.space_before = Pt(1)
                 bp.paragraph_format.space_after  = Pt(1)
 
-        # Assessments
         if unit.assessments:
             p = doc.add_paragraph()
             sf(p.add_run("Assessments:"), size=11, bold=True)
@@ -205,7 +199,6 @@ def export_syllabus_to_docx(syllabus: SyllabusResponse) -> str:
                 bp.paragraph_format.space_before = Pt(1)
                 bp.paragraph_format.space_after  = Pt(1)
 
-        # Readings
         if unit.readings:
             p = doc.add_paragraph()
             sf(p.add_run("Readings:"), size=11, bold=True)
@@ -269,8 +262,8 @@ def export_syllabus_to_docx(syllabus: SyllabusResponse) -> str:
     # ── Save ──
     os.makedirs(EXPORTS_DIR, exist_ok=True)
     safe  = syllabus.course_name.replace(" ", "_")
-    code  = f"_{syllabus.course_code}"      if syllabus.course_code   else ""
-    prog  = syllabus.programme.upper()      if syllabus.programme     else "general"
+    code  = f"_{syllabus.course_code}"       if syllabus.course_code   else ""
+    prog  = syllabus.programme.upper()       if syllabus.programme     else "general"
     yr    = f"_Year{syllabus.year_of_study}" if syllabus.year_of_study else ""
     sem   = f"_S{syllabus.semester}"         if syllabus.semester      else ""
     fname = f"{EXPORTS_DIR}/{safe}{code}_{prog}{yr}{sem}_syllabus.docx"

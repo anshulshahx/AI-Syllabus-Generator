@@ -1,7 +1,6 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field
 from typing import List, Optional
 
-# ── PEO Models ───────────────────────────────────────────────────
 class PEORequest(BaseModel):
     programme_name: str = Field(..., min_length=3, max_length=100)
     programme_description: str = Field(..., min_length=10, max_length=1000)
@@ -16,7 +15,6 @@ class PEOResponse(BaseModel):
     programme_name: str
     peos: List[PEOObject]
 
-# ── PO Models ────────────────────────────────────────────────────
 class PORequest(BaseModel):
     programme_name: str = Field(..., min_length=3, max_length=100)
     programme_description: str = Field(..., min_length=10, max_length=1000)
@@ -30,7 +28,6 @@ class POResponse(BaseModel):
     programme_name: str
     pos: List[POObject]
 
-# ── PSO Models ───────────────────────────────────────────────────
 class PSORequest(BaseModel):
     programme_name: str = Field(..., min_length=3, max_length=100)
     course_list: Optional[List[str]] = []
@@ -45,7 +42,6 @@ class PSOResponse(BaseModel):
     programme_name: str
     psos: List[PSOObject]
 
-# ── Combined Programme Model ─────────────────────────────────────
 class ProgrammeRequest(BaseModel):
     programme_name: str = Field(..., min_length=3, max_length=100)
     programme_description: str = Field(..., min_length=10, max_length=1000)

@@ -33,7 +33,6 @@ def build_syllabus_prompt(
     ltp: str = "3:1:0",
     custom_prompt: str = None
 ) -> str:
-
     year_text   = f"Year {year_of_study}" if year_of_study else "Not specified"
     sem_text    = f"Semester {semester}"  if semester      else "Not specified"
     branch_text = branch                  if branch        else "General"
@@ -42,7 +41,7 @@ def build_syllabus_prompt(
 
     return f"""You are an expert curriculum designer for {prog_ctx}.
 
-Generate a complete syllabus in the EXACT FORMAT used by Indian technical universities (UTU, VTU, AKTU, Anna University).
+Generate a complete syllabus in the EXACT FORMAT used by Indian technical universities.
 
 COURSE DETAILS:
 Course Name: {course_name}
@@ -54,28 +53,28 @@ Semester: {sem_text}
 Branch: {branch_text}
 Credits: {credits}
 L:T:P: {ltp}
-Number of Modules/Units: {num_units}
+Number of Units: {num_units}
 {custom_text}
 
 STRICT RULES:
-1. Generate exactly {num_units} units/modules
-2. topics_paragraph MUST be a single flowing paragraph of comma-separated subtopics ending with period and hours like "(8 hours)" — exactly like UTU/VTU syllabus format
-3. Generate exactly 5 COURSE OBJECTIVES — broad statements of what the course intends
-4. Generate exactly 5 COURSE OUTCOMES labeled CO1 to CO5 — what students can do AFTER the course
-5. Each unit has 3 unit objectives (CSOs) starting with Bloom action verbs
-6. Each unit has 2 unit outcomes starting with Bloom action verbs
-7. Each unit has 2 assessment methods
+1. Generate exactly {num_units} units
+2. topics_paragraph must be comma-separated subtopics as one flowing paragraph ending with (8 hours)
+3. Generate exactly 5 COURSE OBJECTIVES
+4. Generate exactly 5 COURSE OUTCOMES labeled CO1 to CO5
+5. Each unit has 3 unit objectives starting with Bloom verbs
+6. Each unit has 2 unit outcomes starting with Bloom verbs
+7. Each unit has 2 assessments
 8. Each unit has 2 readings
-9. Textbooks must be REAL published books with author, title, publisher, edition, year
-10. YouTube resources must be REAL channels like NPTEL, MIT OCW, freeCodeCamp, Neso Academy
-11. Open source resources must be REAL — GitHub repos, Coursera, edX, documentation sites
-12. Difficulty MUST match {programme.upper()} {education_level} {year_text} {sem_text}
-13. RESPOND IN STRICT JSON ONLY — no markdown, no explanation
+9. Include 5 real textbooks with author, title, publisher, edition, year
+10. Include 3 YouTube or NPTEL resources
+11. Include 3 open source resources
+12. Difficulty MUST match {programme.upper()} {education_level} {year_text}
+13. RESPOND IN STRICT JSON ONLY
 
 JSON FORMAT:
 {{
   "course_name": "{course_name}",
-  "course_code": "realistic course code like CST-003",
+  "course_code": "realistic code like CST-003",
   "education_level": "{education_level}",
   "programme": "{programme}",
   "year_of_study": {year_of_study if year_of_study else "null"},
@@ -84,37 +83,37 @@ JSON FORMAT:
   "credits": {credits},
   "ltp": "{ltp}",
   "course_objectives": [
-    "The idea of ... and their applications.",
-    "To understand ...",
-    "To evaluate ...",
-    "To apply ...",
-    "To acquaint students with ..."
+    "Objective 1",
+    "Objective 2",
+    "Objective 3",
+    "Objective 4",
+    "Objective 5"
   ],
   "course_outcomes": [
-    "CO1: Remember the concept of ... and apply in solving real life problems.",
-    "CO2: Apply the concept of ... to evaluate problems.",
-    "CO3: Understand ... and solve related problems.",
-    "CO4: Design and implement ... for given specifications.",
-    "CO5: Evaluate ... and select appropriate methods."
+    "CO1: verb + outcome",
+    "CO2: verb + outcome",
+    "CO3: verb + outcome",
+    "CO4: verb + outcome",
+    "CO5: verb + outcome"
   ],
   "units": [
     {{
       "unit_id": "UNIT 1",
       "unit_title": "TITLE IN CAPS",
       "hours": 8,
-      "topics_paragraph": "Subtopic1, Subtopic2, Subtopic3, Subtopic4, Subtopic5, Subtopic6, Subtopic7, Subtopic8. (8 hours)",
-      "topics": ["Subtopic1","Subtopic2","Subtopic3","Subtopic4","Subtopic5","Subtopic6","Subtopic7","Subtopic8"],
+      "topics_paragraph": "Topic1, Topic2, Topic3, Topic4, Topic5, Topic6, Topic7, Topic8. (8 hours)",
+      "topics": ["Topic1","Topic2","Topic3","Topic4","Topic5","Topic6","Topic7","Topic8"],
       "unit_objectives": [
-        "Understand the fundamentals of ...",
-        "Apply ... to solve ...",
-        "Analyze ... to evaluate ..."
+        "Understand ...",
+        "Apply ...",
+        "Analyze ..."
       ],
       "unit_outcomes": [
-        "Apply knowledge of ... to ...",
+        "Apply knowledge of ...",
         "Design ... using ..."
       ],
       "assessments": ["Quiz on ...", "Assignment on ..."],
-      "readings": ["Chapter X of Textbook 1", "Chapter Y of Textbook 2"]
+      "readings": ["Chapter X ...", "Chapter Y ..."]
     }}
   ],
   "textbooks": [
@@ -125,18 +124,18 @@ JSON FORMAT:
     "5. Author, Title, Publisher, Edition, Year"
   ],
   "youtube_resources": [
-    "NPTEL - Course Name - https://nptel.ac.in/...",
-    "Channel Name - Topic - URL",
-    "Channel Name - Topic - URL"
+    "NPTEL - Course Name - URL",
+    "Channel - Topic - URL",
+    "Channel - Topic - URL"
   ],
   "open_source_resources": [
-    "Resource Name - Description - URL",
-    "Resource Name - Description - URL",
-    "Resource Name - Description - URL"
+    "Resource - Description - URL",
+    "Resource - Description - URL",
+    "Resource - Description - URL"
   ]
 }}
 
-Generate exactly {num_units} units for {programme.upper()} {education_level} {year_text} {sem_text} now:"""
+Generate exactly {num_units} units now:"""
 
 
 def build_regenerate_prompt(
@@ -164,46 +163,10 @@ def build_regenerate_prompt(
 {reason}
 {custom}
 
-Generate a COMPLETELY DIFFERENT improved version:
+Generate a COMPLETELY DIFFERENT improved version with:
 - Different unit titles and topic coverage
 - Different Bloom verbs
 - More specific measurable outcomes
 - Reorganized topic sequence
 
 {base}"""
-
-
-def build_outcome_prompt(
-    course_name: str,
-    course_description: str,
-    target_bloom_levels: list,
-    n_candidates: int,
-    education_level: str = "undergraduate",
-    programme: str = "btech",
-    year_of_study: int = None,
-    custom_prompt: str = None
-) -> str:
-    levels      = ", ".join(target_bloom_levels)
-    year_text   = f"Year {year_of_study}" if year_of_study else ""
-    custom_text = f"\nADDITIONAL INSTRUCTIONS: {custom_prompt}" if custom_prompt else ""
-
-    return f"""You are a curriculum designer for {programme.upper()} {education_level} {year_text}.
-
-Generate exactly {n_candidates} Course Outcomes (COs) for:
-Course: {course_name}
-Description: {course_description}
-Bloom Levels: {levels}
-Programme: {programme.upper()} {education_level} {year_text}
-{custom_text}
-
-Rules:
-- Each outcome MUST start with a Bloom action verb from: {levels}
-- One verb per outcome only — no compound verbs
-- Be specific and measurable
-- Match difficulty to {programme.upper()} {education_level}
-- VALID JSON ONLY. No explanation. No markdown.
-
-Format:
-{{"outcomes":[{{"text":"verb + outcome","bloom_level":"level","assessment_suggestion":"how to assess","confidence_est":0.9}}]}}
-
-Generate {n_candidates} outcomes now:"""
