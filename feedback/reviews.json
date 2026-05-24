@@ -967,5 +967,158 @@
       "approved_text": "Understand stuff about networks",
       "bloom_level": "understand"
     }
+  },
+  {
+    "outcome_id": "OC001",
+    "course_name": "Data Structures",
+    "original_text": "Apply binary search algorithms to find elements in sorted arrays efficiently",
+    "final_text": "Apply binary search algorithms to find elements in sorted arrays efficiently",
+    "bloom_level": "apply",
+    "action": "accept",
+    "reviewer_comment": "Good outcome",
+    "reviewed_at": "2026-05-23T13:51:54.221185",
+    "training_label": {
+      "is_valid": true,
+      "was_edited": false,
+      "original_text": "Apply binary search algorithms to find elements in sorted arrays efficiently",
+      "approved_text": "Apply binary search algorithms to find elements in sorted arrays efficiently",
+      "bloom_level": "apply"
+    }
+  },
+  {
+    "outcome_id": "OC002",
+    "course_name": "Data Structures",
+    "original_text": "Know the basics of linked lists",
+    "final_text": "Identify the structure and operations of singly and doubly linked lists",
+    "bloom_level": "remember",
+    "action": "edit",
+    "reviewer_comment": "Fixed invalid verb",
+    "reviewed_at": "2026-05-23T13:51:54.221208",
+    "training_label": {
+      "is_valid": true,
+      "was_edited": true,
+      "original_text": "Know the basics of linked lists",
+      "approved_text": "Identify the structure and operations of singly and doubly linked lists",
+      "bloom_level": "remember"
+    }
+  },
+  {
+    "outcome_id": "OC003",
+    "course_name": "Data Structures",
+    "original_text": "Understand and apply sorting algorithms",
+    "final_text": "Understand and apply sorting algorithms",
+    "bloom_level": "understand",
+    "action": "reject",
+    "reviewer_comment": "Compound verb not allowed",
+    "reviewed_at": "2026-05-23T13:51:54.221216",
+    "training_label": {
+      "is_valid": false,
+      "was_edited": false,
+      "original_text": "Understand and apply sorting algorithms",
+      "approved_text": "Understand and apply sorting algorithms",
+      "bloom_level": "understand"
+    }
+  },
+  {
+    "outcome_id": "OC001",
+    "course_name": "Data Structures",
+    "original_text": "Apply binary search algorithms to find elements in sorted arrays efficiently",
+    "final_text": "Apply binary search algorithms to find elements in sorted arrays efficiently",
+    "bloom_level": "apply",
+    "action": "accept",
+    "reviewer_comment": "Good outcome",
+    "reviewed_at": "2026-05-23T13:51:56.119836",
+    "training_label": {
+      "is_valid": true,
+      "was_edited": false,
+      "original_text": "Apply binary search algorithms to find elements in sorted arrays efficiently",
+      "approved_text": "Apply binary search algorithms to find elements in sorted arrays efficiently",
+      "bloom_level": "apply"
+    }
+  },
+  {
+    "outcome_id": "OC002",
+    "course_name": "Data Structures",
+    "original_text": "Know the basics of linked lists",
+    "final_text": "Identify the structure and operations of singly and doubly linked lists",
+    "bloom_level": "remember",
+    "action": "edit",
+    "reviewer_comment": "Fixed invalid verb",
+    "reviewed_at": "2026-05-23T13:51:56.119857",
+    "training_label": {
+      "is_valid": true,
+      "was_edited": true,
+      "original_text": "Know the basics of linked lists",
+      "approved_text": "Identify the structure and operations of singly and doubly linked lists",
+      "bloom_level": "remember"
+    }
+  },
+  {
+    "outcome_id": "OC003",
+    "course_name": "Data Structures",
+    "original_text": "Understand and apply sorting algorithms",
+    "final_text": "Understand and apply sorting algorithms",
+    "bloom_level": "understand",
+    "action": "reject",
+    "reviewer_comment": "Compound verb not allowed",
+    "reviewed_at": "2026-05-23T13:51:56.119862",
+    "training_label": {
+      "is_valid": false,
+      "was_edited": false,
+      "original_text": "Understand and apply sorting algorithms",
+      "approved_text": "Understand and apply sorting algorithms",
+      "bloom_level": "understand"
+    }
+  },
+  {
+    "outcome_id": "T001",
+    "course_name": "Test",
+    "original_text": "Apply pipeline testing to validate endpoints",
+    "final_text": "Apply pipeline testing to validate endpoints",
+    "bloom_level": "apply",
+    "action": "accept",
+    "reviewer_comment": "Good",
+    "reviewed_at": "2026-05-24T12:47:58.014957",
+    "training_label": {
+      "is_valid": true,
+      "was_edited": false,
+      "original_text": "Apply pipeline testing to validate endpoints",
+      "approved_text": "Apply pipeline testing to validate endpoints",
+      "bloom_level": "apply"
+    }
+  },
+  {
+    "outcome_id": "T002",
+    "course_name": "Test",
+    "original_text": "Know the basics of testing",
+    "final_text": "Identify and apply basic software testing methodologies",
+    "bloom_level": "apply",
+    "action": "edit",
+    "reviewer_comment": "Fixed verb",
+    "reviewed_at": "2026-05-24T12:47:58.015006",
+    "training_label": {
+      "is_valid": true,
+      "was_edited": true,
+      "original_text": "Know the basics of testing",
+      "approved_text": "Identify and apply basic software testing methodologies",
+      "bloom_level": "apply"
+    }
+  },
+  {
+    "outcome_id": "T003",
+    "course_name": "Test",
+    "original_text": "Understand stuff about networks",
+    "final_text": "Understand stuff about networks",
+    "bloom_level": "understand",
+    "action": "reject",
+    "reviewer_comment": "Too vague",
+    "reviewed_at": "2026-05-24T12:47:58.015020",
+    "training_label": {
+      "is_valid": false,
+      "was_edited": false,
+      "original_text": "Understand stuff about networks",
+      "approved_text": "Understand stuff about networks",
+      "bloom_level": "understand"
+    }
   }
 ]

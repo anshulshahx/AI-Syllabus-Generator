@@ -51,6 +51,9 @@ def call_ollama(prompt: str, timeout: int = 600) -> str:
     return text.strip()
 
 def parse_syllabus(parsed: dict, request: SyllabusRequest) -> SyllabusResponse:
+    from app.schemas.models import COObject
+
+    # Parse units
     units = []
     for unit in parsed.get("units", []):
         objectives = [validate_bloom_start(o) for o in unit.get("unit_objectives", [])]
@@ -63,23 +66,97 @@ def parse_syllabus(parsed: dict, request: SyllabusRequest) -> SyllabusResponse:
             topics           = unit.get("topics",           []),
             unit_objectives  = objectives,
             unit_outcomes    = outcomes,
+            satisfied_cos    = unit.get("satisfied_cos",    []),
             assessments      = unit.get("assessments",      []),
-            readings         = unit.get("readings",         [])
+            readings         = unit.get("readings",         []),
+            lecture_plan     = unit.get("lecture_plan",     "")
         ))
+
+    # Parse COs — full Indian NBA format
+    raw_cos    = parsed.get("course_outcomes", [])
+    co_objects = []
+    co_texts   = []
+
+    for co in raw_cos:
+        if isinstance(co, dict):
+            co_obj = COObject(
+                co_id               = co.get("co_id",               "CO"),
+                text                = co.get("text",                ""),
+                bloom_level         = co.get("bloom_level",         ""),
+                bloom_verb          = co.get("bloom_verb",          ""),
+                bloom_level_number  = co.get("bloom_level_number",  ""),
+                mapped_pos          = co.get("mapped_pos",          []),
+                po_correlation      = co.get("po_correlation",      {}),
+                mapped_psos         = co.get("mapped_psos",         []),
+                pso_correlation     = co.get("pso_correlation",     {}),
+                attainment_target   = co.get("attainment_target",   "60% of students score above 60%"),
+                attainment_level    = int(co.get("attainment_level", 1)),
+                direct_assessment   = co.get("direct_assessment",   []),
+                indirect_assessment = co.get("indirect_assessment", []),
+                unit_test_marks     = int(co.get("unit_test_marks", 20)),
+                assignment_marks    = int(co.get("assignment_marks", 5)),
+                end_sem_marks       = int(co.get("end_sem_marks",   70))
+            )
+            co_objects.append(co_obj)
+
+            # Build readable text
+            bloom_num = co.get("bloom_level_number", "")
+            pos_text  = ", ".join([
+                f"{po}({co.get('po_correlation',{}).get(po,'?')})"
+                for po in co.get("mapped_pos", [])
+            ])
+            pso_text  = ", ".join([
+                f"{pso}({co.get('pso_correlation',{}).get(pso,'?')})"
+                for pso in co.get("mapped_psos", [])
+            ])
+            co_texts.append(
+                f"{co.get('co_id')}: {co.get('text')} "
+                f"[Bloom: {co.get('bloom_level')} {bloom_num}] "
+                f"[POs: {pos_text}] [PSOs: {pso_text}] "
+                f"[Attainment Target: {co.get('attainment_target','')}]"
+            )
+        else:
+            co_texts.append(str(co))
+
+    # Build exam pattern
+    exam_pattern = parsed.get("exam_pattern", {
+        "internal_assessment": 30,
+        "end_semester_exam": 70,
+        "total": 100,
+        "internal_breakdown": {
+            "unit_tests_2_tests": 20,
+            "assignments": 5,
+            "attendance": 5
+        }
+    })
+
     return SyllabusResponse(
         course_name           = request.course_name,
-        course_code           = parsed.get("course_code") or request.course_code,
-        education_level       = request.education_level   or "undergraduate",
-        programme             = request.programme         or "btech",
+        course_code           = parsed.get("course_code")     or request.course_code,
+        education_level       = request.education_level       or "undergraduate",
+        programme             = request.programme             or "btech",
         year_of_study         = request.year_of_study,
         semester              = request.semester,
         branch                = request.branch,
-        credits               = request.credits           or 4,
-        ltp                   = request.ltp               or "3:1:0",
+        credits               = request.credits               or 4,
+        ltp                   = request.ltp                   or "3:1:0",
         university_name       = request.university_name,
+        standards             = parsed.get("standards",       "NBA GAPC v4.0, AICTE, UGC-LOCF, NAAC, IQAC, Bloom's Taxonomy"),
+        total_hours           = parsed.get("total_hours"),
+        total_lectures        = parsed.get("total_lectures"),
         units                 = units,
         course_objectives     = parsed.get("course_objectives",    []),
-        course_outcomes       = parsed.get("course_outcomes",      []),
+        course_outcomes       = co_objects,
+        course_outcomes_text  = co_texts,
+        co_po_matrix          = parsed.get("co_po_matrix",         {}),
+        co_pso_matrix         = parsed.get("co_pso_matrix",        {}),
+        exam_pattern          = exam_pattern,
+        attainment_formula    = parsed.get("attainment_formula",   "CO Attainment = (Direct × 0.8) + (Indirect × 0.2)"),
+        attainment_levels     = parsed.get("attainment_levels",    {}),
+        po_attainment_formula = parsed.get("po_attainment_formula","PO Attainment = Σ(CO_Attainment × CO-PO_Strength) / Σ(CO-PO_Strength)"),
+        cqi_plan              = parsed.get("cqi_plan"),
+        lesson_plan_note      = parsed.get("lesson_plan_note"),
+        naac_iqac_note        = parsed.get("naac_iqac_note"),
         textbooks             = parsed.get("textbooks",            []),
         youtube_resources     = parsed.get("youtube_resources",    []),
         open_source_resources = parsed.get("open_source_resources",[])

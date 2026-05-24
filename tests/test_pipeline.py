@@ -144,12 +144,27 @@ def test_syllabus_generation():
         units = data.get("units", [])
         results.append(print_result("Syllabus HTTP 200", r.status_code == 200))
         results.append(print_result("3 units generated", len(units) == 3))
-        results.append(print_result("Each unit has unit_id", all("unit_id" in u for u in units)))
-        results.append(print_result("Each unit has unit_title", all("unit_title" in u and u["unit_title"] for u in units)))
-        results.append(print_result("Each unit has unit_objectives", all(len(u.get("unit_objectives",[])) > 0 for u in units)))
-        results.append(print_result("Each unit has unit_outcomes", all(len(u.get("unit_outcomes",[])) > 0 for u in units)))
-        results.append(print_result("course_outcomes present", len(data.get("course_outcomes",[])) > 0))
-        results.append(print_result("textbooks present", len(data.get("textbooks",[])) > 0))
+        results.append(print_result("Each unit has unit_id",
+            all("unit_id" in u for u in units)))
+        results.append(print_result("Each unit has unit_title",
+            all("unit_title" in u and u["unit_title"] for u in units)))
+        results.append(print_result("Each unit has unit_objectives",
+            all(len(u.get("unit_objectives",[])) > 0 for u in units)))
+        results.append(print_result("Each unit has unit_outcomes",
+            all(len(u.get("unit_outcomes",[])) > 0 for u in units)))
+        results.append(print_result("course_objectives present",
+            len(data.get("course_objectives",[])) > 0))
+        results.append(print_result("course_outcomes present",
+            len(data.get("course_outcomes",[])) > 0))
+        results.append(print_result("textbooks present",
+            len(data.get("textbooks",[])) > 0))
+        # New fields
+        results.append(print_result("co_po_matrix present",
+            isinstance(data.get("co_po_matrix"), dict)))
+        results.append(print_result("exam_pattern present",
+            isinstance(data.get("exam_pattern"), dict)))
+        results.append(print_result("standards present",
+            data.get("standards") is not None))
     except Exception as e:
         print(f"  ❌ Syllabus failed: {e}")
         results.append(False)
